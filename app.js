@@ -8,11 +8,10 @@ canvas.height = window.innerHeight;
 ctx.fillStyle = 'white';
 ctx.font = "16px monospace";
 
-let cursorX = 30;
-let cursorY = 80;
 
-let charWidth = 6;
-let lineHeight = 10;
+
+const charWidth = ctx.measureText("M").width; //Why "M"? - Widest character in monospace → safe baseline
+let lineHeight = 16 * 1.4;
 
 let text = "";
 let cursor = 0;
@@ -30,7 +29,6 @@ document.addEventListener('keydown',(event) => {
         }
     }else if(event.key === 'Enter'){
         text = text.slice(0, cursor) + "\n" + text.slice(cursor);
-        
         cursor++;
     }else if(event.key === 'ArrowLeft'){
         if(cursor > 0){
@@ -49,27 +47,35 @@ document.addEventListener('keydown',(event) => {
 function render(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    let x = 30;
-    let y = 80;
+    let startX = 30;
+    let startY = 80;
+
+    let x = startX;
+    let y = startY;
 
     for(let i = 0; i < text.length; i++){
-        if(i === cursor){
-            ctx.fillText("|", x, y);
-            x += charWidth
-        }
-
         if(text[i] === '\n'){
             y += lineHeight;
-            x = 30;
+            x = startX;
         }else{
-            ctx.fillText(text[i],x,y);
+            ctx.fillText(text[i], x, y);
             x += charWidth;
         }
 
-       
+
     }
 
-    if (cursor === text.length) {
-        ctx.fillText("|", x, y);
+    let cx = startX;
+    let cy = startY;
+
+    for(let i = 0; i< cursor; i++){
+        if(text[i] === '\n'){
+            cy += lineHeight;
+            cx = startX
+        }else{
+            cx += charWidth;
+        }
     }
+
+    ctx.fillRect(cx, cy - 14, 2, 18);
 }
