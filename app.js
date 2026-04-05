@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
+let showCursor = true;
 
 ctx.fillStyle = 'white';
 ctx.font = "16px monospace";
@@ -46,6 +46,7 @@ document.addEventListener('keydown',(event) => {
 
 function render(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    
 
     let startX = 30;
     let startY = 80;
@@ -77,5 +78,14 @@ function render(){
         }
     }
 
+   
+
+    if (showCursor) {
     ctx.fillRect(cx, cy - 14, 2, 18);
 }
+}
+
+ setInterval(() => {
+        showCursor = !showCursor;
+        render();
+    }, 500);
