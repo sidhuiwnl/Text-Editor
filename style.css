@@ -1,0 +1,15 @@
+/* Remove default spacing */
+body {
+  margin: 0;
+  padding: 0;
+  background: #000; /* full page black */
+  overflow: hidden; /* no scrollbars */
+}
+
+/* Make canvas fill the screen */
+#canvas {
+  display: block;
+  background: #000; /* black editor look */
+  width: 100vw;
+  height: 100vh;
+}
