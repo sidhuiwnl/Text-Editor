@@ -6,6 +6,7 @@ canvas.height = window.innerHeight;
 
 
 ctx.fillStyle = 'white';
+ctx.font = "16px monospace";
 
 let cursorX = 30;
 let cursorY = 80;
