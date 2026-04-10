@@ -141,6 +141,24 @@ class GapBuffer{
 
 
     _grow(){
-        
+        const extra = Math.max(256,this.buf.length) // doubling the inital 256
+        const newBuf  = new Array(this.buf.length + extra).fill(null); // same this.buf plus extra 256
+
+        for(let i = 0; i < this.gapStart; i++){
+            newBuf[i] = this.buf[i];   
+        }
+
+        const rightLen = this.buf.length - this.gapEnd;
+        const newGapEnd = newBuf.length - rightLen;
+
+        for(let i = 0; i < newGapEnd; i++){
+            newBuf[newGapEnd + i] = this.buf[this.gapEnd + i];          
+        }
+
+        this.buf = newBuf;
+        this.gapEnd = newGapEnd;
+
     }
 }
+
+
