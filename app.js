@@ -74,6 +74,7 @@ document.addEventListener('keydown',(event) => {
 })
 
 
+
 function renderText(){
     textCtx.clearRect(0,0,textCanvas.width,textCanvas.height);
     const lines = text.split("\n");
@@ -81,6 +82,8 @@ function renderText(){
     lines.forEach((line,i) => {
         textCtx.fillText(line,START_X,START_Y + i * LINE_HEIGHT)
     })
+
+    console.log("The text",text)
 }
 
 
@@ -120,3 +123,24 @@ window.addEventListener('resize', () => {
   renderText();
   renderCursor();
 });
+
+
+
+
+
+
+class GapBuffer{
+    constructor(initialCapacity = 256){
+        this.buf = new Array(initialCapacity).fill(null);
+        this.gapStart = 0;
+        this.gapEnd   = initialCapacity;
+    }
+
+    get getGapSize() { return this.gapEnd - this.gapStart };
+    get length() { return this.buf.length - this.gapSize; };
+
+
+    _grow(){
+        
+    }
+}
