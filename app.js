@@ -45,26 +45,21 @@ document.addEventListener('keydown',(event) => {
 
 
 function render(){
+    console.log("This is running everytime")
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
 
     let startX = 30;
     let startY = 80;
 
-    let x = startX;
-    let y = startY;
+    
 
-    for(let i = 0; i < text.length; i++){
-        if(text[i] === '\n'){
-            y += lineHeight;
-            x = startX;
-        }else{
-            ctx.fillText(text[i], x, y);
-            x += charWidth;
-        }
+    const lines = text.split("\n");
 
-
-    }
+    
+    lines.forEach((line, i) => {
+    ctx.fillText(line, startX, startY + i * lineHeight);
+    });
 
     let cx = startX;
     let cy = startY;
@@ -83,6 +78,11 @@ function render(){
     if (showCursor) {
     ctx.fillRect(cx, cy - 14, 2, 18);
 }
+}
+
+
+function getCaretPosition(line,cursor){
+
 }
 
  setInterval(() => {
