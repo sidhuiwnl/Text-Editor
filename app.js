@@ -44,12 +44,46 @@ const gb = new GapBuffer();
 
 let text       = '';
 let cursor     = 0;
+let rememberedCol = 0;
 let showCursor = true;
 
 
 
 
 
+
+function getPos(text,cursor){
+    
+    let line = 0, col = 0;
+
+    for(let i = 0; i < cursor; i++){
+        if(text[i] === '\n'){ line ++, col = 0}
+        else col ++;
+    }
+
+    return {line,col}
+
+}
+
+
+// to get the character index where a line begins
+
+function lineStart(text,line){
+    let l = 0;
+
+    for(let i = 0; i < text.length; i++){
+        if (l === line) return i;
+        if(text[i] === "\n") return l++;
+    }
+    return text.length;
+}
+
+// to get the line length like "Hello\nWorld"
+
+function lineLength(text,line){
+    const lines = text.split("\n");
+    return lines[line]?.length ?? 0;
+}
 
 
 document.addEventListener('keydown',(event) => {
@@ -58,23 +92,46 @@ document.addEventListener('keydown',(event) => {
          event.preventDefault();
     }
 
+    
 
     if(event.key.length === 1){
        gb.insert(cursor,event.key);
        cursor++;
+       rememberedCol = getPos(gb.toString(),cursor).col;
+
+      
+
     }else if(event.key === 'Backspace'){
        gb.delete(cursor);
        if (cursor > 0) cursor--;
+       rememberedCol = getPos(gb.toString(),cursor).col;
+
+       
+
     }else if(event.key === 'Enter'){
         gb.insert(cursor, '\n');
         cursor++;
+        rememberedCol = 0;
+
     }else if(event.key === 'ArrowLeft'){
         if(cursor > 0){
             cursor--;
         }
+        rememberedCol = getPos(gb.toString(), cursor).col;
+        
     }else if (event.key === 'ArrowRight'){
         if(cursor < gb.length){
             cursor++;
+        }
+        rememberedCol = getPos(gb.toString(), cursor).col;
+       
+    }else if(event.key === 'ArrowUp'){
+        const t = gb.toString();
+        const { line } = getPos(t,cursor);
+
+        if(line > 0){
+            const targetCol = Math.min(rememberedCol,lineLength(t,line - 1));
+            cursor = lineStart(t,line - 1) + targetCol;
         }
     }
 
@@ -94,7 +151,7 @@ function renderText(){
         textCtx.fillText(line,START_X,START_Y + i * LINE_HEIGHT)
     })
 
-    console.log("The text",text)
+    
 }
 
 
@@ -103,25 +160,14 @@ function renderCursor(){
 
     if(!showCursor ) return;
 
-    const {line,col} = getCaretPosition(text,cursor);
+    const {line,col} = getPos(text,cursor);
 
     const cx = START_X + col * charWidth;
     const cy = START_Y + line * LINE_HEIGHT;
     cursorCtx.fillRect(cx, cy - 14, 2, 18);
 }
 
-function getCaretPosition(text,cursor){
-    
-    let line = 0, col = 0;
 
-    for(let i = 0; i < cursor; i++){
-        if(text[i] === '\n'){ line ++, col = 0}
-        else col ++;
-    }
-
-    return {line,col}
-
-}
 
 setInterval(() => {
     showCursor = !showCursor;
