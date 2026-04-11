@@ -73,7 +73,7 @@ function lineStart(text,line){
 
     for(let i = 0; i < text.length; i++){
         if (l === line) return i;
-        if(text[i] === "\n") return l++;
+        if(text[i] === "\n") l++;
     }
     return text.length;
 }
@@ -132,6 +132,17 @@ document.addEventListener('keydown',(event) => {
         if(line > 0){
             const targetCol = Math.min(rememberedCol,lineLength(t,line - 1));
             cursor = lineStart(t,line - 1) + targetCol;
+        }
+    }else if(event.key === 'ArrowDown'){
+        const t = gb.toString();
+        const { line } = getPos(t, cursor); // gives us the line we are in in number
+
+        console.log(line)
+
+        const lines = t.split("\n");
+        if(line < lines.length - 1){
+            const targetCol = Math.min(rememberedCol,lineLength(t, line + 1));
+            cursor = lineStart(t,line + 1) + targetCol;
         }
     }
 
