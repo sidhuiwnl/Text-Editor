@@ -1,3 +1,5 @@
+import { GapBuffer } from './GapBuffer.js';
+
 const textCanvas   = document.getElementById('textCanvas');
 const cursorCanvas = document.getElementById('cursorCanvas');
 const textCtx      = textCanvas.getContext('2d');
@@ -7,6 +9,10 @@ const FONT         = '16px monospace';
 const START_X      = 30;
 const START_Y      = 80;
 const LINE_HEIGHT  = 16 * 1.4;
+
+
+
+
 
 
 
@@ -28,7 +34,13 @@ function setSize() {
 setSize();
 
 
+
+
 const charWidth = textCtx.measureText('M').width; //Why "M"? - Widest character in monospace → safe baseline
+const HANDLED_KEYS = ['Backspace','Enter','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+
+
+const gb = new GapBuffer();
 
 let text       = '';
 let cursor     = 0;
@@ -37,7 +49,8 @@ let showCursor = true;
 
 
 
-const HANDLED_KEYS = ['Backspace','Enter','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+
+
 
 document.addEventListener('keydown',(event) => {
 
@@ -47,28 +60,26 @@ document.addEventListener('keydown',(event) => {
 
 
     if(event.key.length === 1){
-       text = text.slice(0,cursor) + event.key + text.slice(cursor);
-       
+       gb.insert(cursor,event.key);
        cursor++;
     }else if(event.key === 'Backspace'){
-        if(cursor > 0){
-            text = text.slice(0,cursor - 1) + text.slice(cursor);
-            cursor--;
-        }
+       gb.delete(cursor);
+       if (cursor > 0) cursor--;
     }else if(event.key === 'Enter'){
-        text = text.slice(0, cursor) + "\n" + text.slice(cursor);
+        gb.insert(cursor, '\n');
         cursor++;
     }else if(event.key === 'ArrowLeft'){
         if(cursor > 0){
             cursor--;
         }
     }else if (event.key === 'ArrowRight'){
-        if(cursor < text.length){
+        if(cursor < gb.length){
             cursor++;
         }
     }
 
     showCursor = true; // reset blink so cursor is always visible while typing
+    text = gb.toString(); 
     renderText();
     renderCursor();
 })
@@ -120,6 +131,7 @@ setInterval(() => {
 
 window.addEventListener('resize', () => {
   setSize();
+  text = gb.toString();
   renderText();
   renderCursor();
 });
@@ -127,38 +139,5 @@ window.addEventListener('resize', () => {
 
 
 
-
-
-class GapBuffer{
-    constructor(initialCapacity = 256){
-        this.buf = new Array(initialCapacity).fill(null);
-        this.gapStart = 0;
-        this.gapEnd   = initialCapacity;
-    }
-
-    get getGapSize() { return this.gapEnd - this.gapStart };
-    get length() { return this.buf.length - this.gapSize; };
-
-
-    _grow(){
-        const extra = Math.max(256,this.buf.length) // doubling the inital 256
-        const newBuf  = new Array(this.buf.length + extra).fill(null); // same this.buf plus extra 256
-
-        for(let i = 0; i < this.gapStart; i++){
-            newBuf[i] = this.buf[i];   
-        }
-
-        const rightLen = this.buf.length - this.gapEnd;
-        const newGapEnd = newBuf.length - rightLen;
-
-        for(let i = 0; i < newGapEnd; i++){
-            newBuf[newGapEnd + i] = this.buf[this.gapEnd + i];          
-        }
-
-        this.buf = newBuf;
-        this.gapEnd = newGapEnd;
-
-    }
-}
 
 
