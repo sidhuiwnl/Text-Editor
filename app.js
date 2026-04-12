@@ -102,8 +102,13 @@ document.addEventListener('keydown', (event) => {
         if(cmd){
             cursor = cmd.type === 'insert'
              ? (event.shiftKey ? cmd.pos + 1 : cmd.pos)
-             : cmd.pos
+             : (event.shiftKey ? cmd.pos : cmd.pos + 1);
+            rememberedCol = getPos(gb.toString(), cursor).col; 
         }
+         text = gb.toString();
+         renderText();
+         renderCursor();
+         return;
     }
 
     else if (event.key.length === 1) {
