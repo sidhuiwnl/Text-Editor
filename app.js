@@ -12,11 +12,6 @@ const START_Y = 80;
 const LINE_HEIGHT = 16 * 1.4;
 
 
-
-
-
-
-
 function applyStyles() {
     textCtx.fillStyle = 'white';
     textCtx.font = FONT;
@@ -36,7 +31,6 @@ setSize();
 
 
 
-
 const charWidth = textCtx.measureText('M').width; //Why "M"? - Widest character in monospace → safe baseline
 const HANDLED_KEYS = ['Backspace', 'Enter', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
 
@@ -48,8 +42,6 @@ let text = '';
 let cursor = 0;
 let rememberedCol = 0;
 let showCursor = true;
-
-
 
 
 
